@@ -1,0 +1,18 @@
+{
+    "name": "Github Code Tree",
+    "version": "0.0.1",
+    "description": "Show the source tree on the github PR",
+    "content_scripts": [
+      {
+        "matches": ["http://*/*", "https://*/*"],
+        "js": ["lib/jquery-1.11.1.min.js", "app/app.js"]
+      }
+    ],
+  
+    "permissions": [
+      "tabs",
+      "http://*/*",
+      "https://*/*"
+    ],
+    "manifest_version": 2
+  }
