@@ -31,6 +31,8 @@ function initialSetup() {
   injectCss(); // style.js
   injectHTML();
 
+  areDiffBlocksCollapsed() ?  $('#collapseAll').hide() : $('#expandAll').hide();
+
   // Click Functions
   $('.gct-folder-name').click(obj => {
       $($($(obj.currentTarget).parent()[0])[0]).toggleClass('gct-folder-open');
@@ -43,17 +45,29 @@ function initialSetup() {
   $('#closeAll').click(() => {
       $('.gct-folder').removeClass('gct-folder-open');
   });
+
+  $('#expandAll').click(() => {
+      expandAllDiffBlocks();
+  });
+
+  $('#collapseAll').click(() => {
+      collapseAllDiffBlocks();
+  });
 }
 
 function injectHTML() {
     tree = buildTree();
-    $(`<div class="gct-file-tree">
-        <div class="gct-header">
-            <div id="openAll">Open All</div>
-            <div id="closeAll">Close All</div>
-        </div>
-        ${buildHtmlTree(tree)}
-        </div>`).appendTo('#files');
+    $(
+        `<div class="gct-file-tree">
+            <div class="gct-header">
+                <div id="openAll">Open All</div>
+                <div id="closeAll">Close All</div>
+                <div id="expandAll">Expand All</div>
+                <div id="collapseAll">Collapse All</div>
+            </div>
+            ${buildHtmlTree(tree)}
+        </div>`
+    ).appendTo('#files');
 }
 
 function buildHtmlTree(tree) {
@@ -140,4 +154,40 @@ function mergeObjects(og, so) {
         }
     }
     return og;
+}
+
+function areDiffBlocksCollapsed()
+{
+    var numberOfDiffBlocksCollapsed = 0;
+    var numberOfDiffBlocks = $('#files .file').length;
+
+    $('#files .file').each(function(){
+        if ($(this).hasClass('open Details--on')) {
+            numberOfDiffBlocksCollapsed++;
+        }
+    });
+
+    return numberOfDiffBlocksCollapsed === numberOfDiffBlocks;
+}
+
+function expandAllDiffBlocks()
+{
+    $('#expandAll').hide();
+    $('#collapseAll').show();
+    $('#files .file').each(function(){
+        if ($(this).hasClass('open Details--on')) {
+            $(this).removeClass('open Details--on')
+        }
+    });
+}
+
+function collapseAllDiffBlocks()
+{
+    $('#collapseAll').hide();
+    $('#expandAll').show();
+    $('#files .file').each(function(){
+        if (!$(this).hasClass('open Details--on')) {
+            $(this).addClass('open Details--on')
+        }
+    });
 }
