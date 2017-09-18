@@ -96,7 +96,8 @@ function buildTree() {
                             .split(' & ');
         var pathString = $(item).find('a')[0];
         var pathLink = pathString.getAttribute("href");
-        var itemSplitted = pathString.text.split('/');
+        var filePath = $(item).parent('.file-header').data('path');
+        var itemSplitted = filePath.split('/');
 
         var nodeObj = {};
         var nodeObjJoker = nodeObj;
