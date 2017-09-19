@@ -14,7 +14,7 @@ function start() {
     if(location.origin + location.pathname != oldLocation) {
       oldLocation = location.origin + location.pathname;
 
-      urlRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z1-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
+      urlRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
       if(location.href.match(urlRegex)) { // show only on PR files page
         initialSetup();
       }
@@ -36,6 +36,14 @@ function initialSetup() {
   // Click Functions
   $('.gct-folder-name').click(obj => {
       $($($(obj.currentTarget).parent()[0])[0]).toggleClass('gct-folder-open');
+  });
+
+  $('.gct-file-name').click(obj => {
+    var href = $(obj.currentTarget)[0].getAttribute("href");
+    var file = $(`.file-info > a[href="${href}"]`).parent().parent().parent();
+    if ($(file).hasClass('open Details--on')) {
+      $(file).removeClass('open Details--on');
+    }
   });
 
   $('#openAll').click(() => {
@@ -156,8 +164,7 @@ function mergeObjects(og, so) {
     return og;
 }
 
-function areDiffBlocksCollapsed()
-{
+function areDiffBlocksCollapsed() {
     var numberOfDiffBlocksCollapsed = 0;
     var numberOfDiffBlocks = $('#files .file').length;
 
@@ -170,8 +177,7 @@ function areDiffBlocksCollapsed()
     return numberOfDiffBlocksCollapsed === numberOfDiffBlocks;
 }
 
-function expandAllDiffBlocks()
-{
+function expandAllDiffBlocks() {
     $('#expandAll').hide();
     $('#collapseAll').show();
     $('#files .file').each(function(){
@@ -181,8 +187,7 @@ function expandAllDiffBlocks()
     });
 }
 
-function collapseAllDiffBlocks()
-{
+function collapseAllDiffBlocks() {
     $('#collapseAll').hide();
     $('#expandAll').show();
     $('#files .file').each(function(){
