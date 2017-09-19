@@ -24,12 +24,9 @@ function start() {
 
 function initialSetup() {
   if ($('.js-diff-progressive-spinner').length) {
-    console.log('is loading..');
     setTimeout(initialSetup, 100);
     return;
   }
-
-  console.log('starting..');
 
   injectCss(); // style.js
   injectHTML();
