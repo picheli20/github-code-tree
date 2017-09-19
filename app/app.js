@@ -1,6 +1,9 @@
 $(document).ready(start);
 
+var isCommit = false;
+
 $(window).scroll(() => {
+  if (isCommit) return;
   if($('.is-stuck').length) {
     $('.gct-file-tree').addClass('gct-file-tree-fixed');
   }else {
@@ -14,8 +17,12 @@ function start() {
     if(location.origin + location.pathname != oldLocation) {
       oldLocation = location.origin + location.pathname;
 
-      urlRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
-      if(location.href.match(urlRegex)) { // show only on PR files page
+      urlPullRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
+      urlCommitRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/commit/;
+
+      isCommit = location.href.match(urlCommitRegex);
+
+      if(location.href.match(urlPullRegex) || location.href.match(urlCommitRegex)) { // show only on PR files page
         initialSetup();
       }
     }
@@ -23,12 +30,12 @@ function start() {
 }
 
 function initialSetup() {
-  if ($('.js-diff-progressive-spinner').length) {
+  if ($('.js-diff-progressive-spinner').length || !$('#files').length) {
     setTimeout(initialSetup, 100);
     return;
   }
 
-  injectCss(); // style.js
+  injectCss(isCommit ? 0 : 178, isCommit ? 20 : 0); // style.js
   injectHTML();
 
   areDiffBlocksCollapsed() ?  $('#collapseAll').hide() : $('#expandAll').hide();

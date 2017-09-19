@@ -1,4 +1,4 @@
-function injectCss() {
+function injectCss(offsetTop, offsetLeft) {
     $('#gct-style').remove();
     $(`<style type='text/css' id="gct-style">
         #files {
@@ -17,9 +17,9 @@ function injectCss() {
 
         .gct-file-tree {
             position: absolute;
-            top: ${$('#files').offset().top - 178}px;
+            top: ${$('#files').offset().top - offsetTop}px;
             background-color: #fff;
-            left: 0;
+            left: ${offsetLeft}px;
             z-index: 28;
             width: 280px;
             border: 1px solid #ddd;
