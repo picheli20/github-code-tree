@@ -94,6 +94,10 @@ function buildTree() {
         var diff = $(item).find('.diffstat')[0]
                             .getAttribute("aria-label")
                             .split(' & ');
+
+        if (diff.length !== 2) { // skip the "Empty file removed" case
+            diff = ['0', '0'];
+        }
         var pathString = $(item).find('a')[0];
         var pathLink = pathString.getAttribute("href");
         var filePath = $(item).parent('.file-header').data('path');
