@@ -14,7 +14,7 @@ function start() {
     if(location.origin + location.pathname != oldLocation) {
       oldLocation = location.origin + location.pathname;
 
-      urlRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z1-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/files/;
+      urlRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z1-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
       if(location.href.match(urlRegex)) { // show only on PR files page
         initialSetup();
       }
