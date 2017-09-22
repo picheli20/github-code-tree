@@ -90,7 +90,7 @@ function buildHtmlTree(tree) {
 
     for(var key in tree) {
         if(key === 'files') continue;
-        content += `<li class="gct-folder">
+        content += `<li class="gct-folder gct-folder-open">
             <span class="gct-folder-name">${iconFolder()} ${key}</span>
             <div class="gct-sub-folders">${buildHtmlTree(tree[key])}</div>
         </li>`;
