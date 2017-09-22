@@ -1,6 +1,6 @@
 {
     "name": "Github Code Tree",
-    "version": "0.0.3",
+    "version": "0.0.31",
     "description": "Show the source tree on the github PR",
     "content_scripts": [
       {
