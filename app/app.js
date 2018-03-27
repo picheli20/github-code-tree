@@ -14,7 +14,7 @@ $(window).scroll(() => {
 function start() {
   var oldLocation;
   setInterval(() => {
-    if(location.origin + location.pathname != oldLocation) {
+    if(!$('.gct-folder-name').length) {
       oldLocation = location.origin + location.pathname;
 
       urlPullRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
@@ -31,7 +31,6 @@ function start() {
 
 function initialSetup() {
   if ($('.js-diff-progressive-spinner').length || !$('#files').length) {
-    setTimeout(initialSetup, 100);
     return;
   }
 
