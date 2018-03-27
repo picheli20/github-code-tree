@@ -88,27 +88,41 @@ function injectHTML() {
 function buildHtmlTree(tree) {
     var content = '<ul>';
 
+    let unorderedList = [];
     for(var key in tree) {
-        if(key === 'files') continue;
-        content += `<li class="gct-folder gct-folder-open">
-            <span class="gct-folder-name">${iconFolder()} ${key}</span>
-            <div class="gct-sub-folders">${buildHtmlTree(tree[key])}</div>
-        </li>`;
+        if(key === 'files') {
+            unorderedList = unorderedList.concat(tree.files.map(item => ({
+                type: 'file',
+                name: item.name,
+                file: item
+            })));
+        }else {
+            unorderedList.push({
+                type: 'directory',
+                name: key
+            });
+        }
     }
+    const orderedList = unorderedList.sort((a,b) => a.name.localeCompare(b.name));
 
-    if(tree.files) {
-        tree.files.map(item => {
+    orderedList.forEach(item => {
+        if(item.type === 'file') {
             content += `
                 <li class="gct-file">
-                    <a class="gct-file-name" href="${item.link}">${iconFile()}  ${item.name}</a>
+                    <a class="gct-file-name" href="${item.file.link}">${iconFile()}  ${item.file.name}</a>
                     <span class="gct-file-changes">
-                        <span class="gct-file-added">+${item.added}</span>
-                        <span class="gct-file-removed">-${item.removed}</span>
+                        <span class="gct-file-added">+${item.file.added}</span>
+                        <span class="gct-file-removed">-${item.file.removed}</span>
                     </span>
                 </li>
             `;
-        });
+        }else {
+            content += `<li class="gct-folder gct-folder-open">
+                <span class="gct-folder-name">${iconFolder()} ${item.name}</span>
+                <div class="gct-sub-folders">${buildHtmlTree(tree[item.name])}</div>
+            </li>`;
     }
+    });
 
     return content;
 }
