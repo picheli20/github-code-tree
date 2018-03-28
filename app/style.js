@@ -1,7 +1,7 @@
 function injectCss(offsetTop, offsetLeft) {
     $('#gct-style').remove();
     $(`<style type='text/css' id="gct-style">
-        #files {
+        body.full-width #files {
             margin-left: 300px;
         }
 
@@ -74,6 +74,7 @@ function injectCss(offsetTop, offsetLeft) {
             cursor: pointer;
         }
 
+        body:not(.full-width) .gct-file-tree,
         .gct-file-tree-fixed {
             position: fixed;
             top: 70px;
