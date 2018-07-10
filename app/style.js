@@ -22,7 +22,7 @@ function injectCss(offsetTop, offsetLeft) {
       left: ${offsetLeft}px;
       z-index: 28;
       width: 280px;
-      border: 0;
+      border: 1px solid #ddd;
       overflow: auto;
       padding: 10px;
     }
