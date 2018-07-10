@@ -2,9 +2,23 @@
     "name": "Github Code Tree",
     "version": "0.1.0",
     "description": "Show the source tree on the github PR",
+    "manifest_version": 2,
+    "permissions": [
+      "activeTab",
+      "https://github.com/*"
+    ],
+    "browser_action": {
+      "default_icon": "icon.png"
+    },
+    "optional_permissions": [
+      "http://*/*",
+      "https://*/*"
+    ],
     "content_scripts": [
       {
-        "matches": ["http://*/*", "https://*/*"],
+        "matches": [
+          "https://github.com/*"
+        ],
         "js": [
           "lib/jquery-1.11.1.min.js",
           "app/icons.js",
@@ -12,15 +26,5 @@
           "app/app.js"
         ]
       }
-    ],
-
-    "permissions": [
-      "tabs",
-      "http://*/*",
-      "https://*/*"
-    ],
-    "manifest_version": 2,
-    "browser_action": {
-      "default_icon": "icon.png"
-    }
+    ]
   }

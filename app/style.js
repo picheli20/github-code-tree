@@ -18,11 +18,11 @@ function injectCss(offsetTop, offsetLeft) {
     .gct-file-tree {
       position: absolute;
       top: ${$('#files').offset().top - offsetTop}px;
-      background-color: #fff;
+      background-color: transparent;
       left: ${offsetLeft}px;
       z-index: 28;
       width: 280px;
-      border: 1px solid #ddd;
+      border: 0;
       overflow: auto;
       padding: 10px;
     }
