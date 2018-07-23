@@ -22,20 +22,25 @@ function start() {
 
       isCommit = location.href.match(urlCommitRegex);
 
-      if(location.href.match(urlPullRegex) || location.href.match(urlCommitRegex)) { // show only on PR files page
-        initialSetup();
+      if(
+        (location.href.match(urlPullRegex) || location.href.match(urlCommitRegex)) // show only on PR files page
+      ) {
+        chrome.storage.sync.get(['closed', 'collapsed', 'folders'], items => initialSetup(items));
       }
     }
   }, 500);
 }
 
-function initialSetup() {
+function initialSetup(savedItems) {
   if ($('.js-diff-progressive-spinner').length || !$('#files').length) {
     return;
   }
 
   injectCss(isCommit ? 0 : 178, isCommit ? 20 : 0); // style.js
-  injectHTML();
+  injectHTML(savedItems);
+
+  savedItems.collapsed ? collapseAllDiffBlocks() : expandAllDiffBlocks();
+  savedItems.closed ? close() : open();
 
   areDiffBlocksCollapsed() ? $('#collapseAll').hide() : $('#expandAll').hide();
 
@@ -52,25 +57,15 @@ function initialSetup() {
     }
   });
 
-  $('#openAll').click(() => {
-    $('.gct-folder').addClass('gct-folder-open');
-  });
+  $('#openAll').click(() => open());
+  $('#closeAll').click(() => close());
 
-  $('#closeAll').click(() => {
-    $('.gct-folder').removeClass('gct-folder-open');
-  });
-
-  $('#expandAll').click(() => {
-    expandAllDiffBlocks();
-  });
-
-  $('#collapseAll').click(() => {
-    collapseAllDiffBlocks();
-  });
+  $('#expandAll').click(() => expandAllDiffBlocks());
+  $('#collapseAll').click(() => collapseAllDiffBlocks());
 }
 
-function injectHTML() {
-  tree = buildTree();
+function injectHTML(savedItems) {
+  tree = buildTree(savedItems);
   $(
     `<div class="gct-file-tree">
         <div class="gct-header">
@@ -126,7 +121,7 @@ function buildHtmlTree(tree) {
     return content;
 }
 
-function buildTree() {
+function buildTree(savedItems) {
   var tree = {};
 
   $('.file-info').map((i, item) => {
@@ -163,7 +158,59 @@ function buildTree() {
     tree = mergeObjects(tree, nodeObj);
   });
 
+  if (savedItems.folders) {
+    tree = joinEmptyFolders(tree, []);
+
+    if (tree.merge) {
+      let temporaryTree = {};
+      temporaryTree[tree.key] = tree.obj;
+      tree = temporaryTree;
+    }
+  }
+
   return tree;
+}
+
+function joinEmptyFolders(obj, paths) {
+  let current = obj;
+  paths.map(path => current = current[path]);
+
+  const files = Object.keys(current).filter(key => Array.isArray(current[key]));
+
+  Object.keys(current)
+    .filter(key => !Array.isArray(current[key])).map(key => {
+    const childPath = [...paths, key];
+    const folder = joinEmptyFolders(obj, childPath);
+    if (folder.merge && files.length === 0) {
+      childPath[childPath.length - 1] = `${key}/${folder.key}`;
+      current[`${key}/${folder.key}`] = folder.obj;
+      delete current[key];
+
+      return {
+        merge: true,
+        obj: { ...current },
+        key: key,
+      };
+    }
+  });
+
+  // yes, I need to extract again the keys from the current, it could be modified
+  var keys = Object.keys(current).filter(key => !Array.isArray(current[key]));
+
+  // has only sub-folder, so should merge the keys
+  if (keys.length === 1) {
+    let childKey = keys[0];
+
+    if (current[keys[0]].files && current[keys[0]].files.length) {
+      return {
+        merge: true,
+        obj: current[keys[0]],
+        key: keys[0],
+      };
+    }
+  }
+
+  return current;
 }
 
 function mergeObjects(og, so) {
@@ -215,4 +262,12 @@ function collapseAllDiffBlocks() {
       $(this).addClass('open Details--on')
     }
   });
+}
+
+function open() {
+  $('.gct-folder').addClass('gct-folder-open');
+}
+
+function close() {
+  $('.gct-folder').removeClass('gct-folder-open');
 }
