@@ -23,9 +23,9 @@
         ],
         "js": [
           "lib/jquery-1.11.1.min.js",
-          "app/icons.js",
-          "app/style.js",
-          "app/app.js"
+          "app/background/icons.js",
+          "app/background/style.js",
+          "app/background/index.js"
         ]
       }
     ]

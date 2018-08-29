@@ -1,37 +1,54 @@
-$(document).ready(start);
-
 var isCommit = false;
 
-$(window).scroll(() => {
-  if (isCommit) return;
-  if($('.is-stuck').length) {
-    $('.gct-file-tree').addClass('gct-file-tree-fixed');
-  }else {
-    $('.gct-file-tree').removeClass('gct-file-tree-fixed');
-  }
-});
+const open = () =>  $('.gct-folder').addClass('gct-folder-open');
+const close = () => $('.gct-folder').removeClass('gct-folder-open');
 
-function start() {
-  var oldLocation;
-  setInterval(() => {
-    if(!$('.gct-folder-name').length) {
-      oldLocation = location.origin + location.pathname;
 
-      urlPullRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
-      urlCommitRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/commit/;
-
-      isCommit = location.href.match(urlCommitRegex);
-
-      if(
-        (location.href.match(urlPullRegex) || location.href.match(urlCommitRegex)) // show only on PR files page
-      ) {
-        chrome.storage.sync.get(['closed', 'collapsed', 'folders'], items => initialSetup(items));
-      }
-    }
-  }, 500);
+const expandAllDiffBlocks = () => {
+  $('#collapseAll').show();
+  $('#expandAll').hide();
+  $('#files .file').each(() => !$(this).hasClass('Details--on open') && $(this).addClass('Details--on open'));
 }
 
-function initialSetup(savedItems) {
+const collapseAllDiffBlocks = () => {
+  $('#collapseAll').hide();
+  $('#expandAll').show();
+  $('#files .file').each(() => $(this).hasClass('Details--on open') && $(this).removeClass('Details--on open'));
+}
+
+
+const injectHTML = (savedItems) => $(
+  `<div class="gct-file-tree">
+      <div class="gct-header">
+        <div id="openAll">Open All</div>
+        <div id="closeAll">Close All</div>
+        <div id="expandAll">Expand All</div>
+        <div id="collapseAll">Collapse All</div>
+      </div>
+      ${buildHtmlTree(buildTree(savedItems))}
+  </div>`
+).appendTo('#files');
+
+const mergeObjects = (og, so) => {
+  for (var key in so) {
+    if (!og[key]) {
+      og[key] = {};
+    }
+
+    if (so[key].hasOwnProperty('length')) {
+      og[key] = og[key].hasOwnProperty('length') ? og[key] : [];
+      og[key].push(so[key][0]);
+    }
+
+    if(typeof so[key] === 'object' && !so[key].hasOwnProperty('length')) {
+      mergeObjects(og[key], so[key]);
+    }
+  }
+  return og;
+}
+
+
+const initialSetup = (savedItems) => {
   if ($('.js-diff-progressive-spinner').length || !$('#files').length) {
     return;
   }
@@ -62,22 +79,31 @@ function initialSetup(savedItems) {
   $('#collapseAll').click(() => collapseAllDiffBlocks());
 }
 
-function injectHTML(savedItems) {
-  tree = buildTree(savedItems);
-  $(
-    `<div class="gct-file-tree">
-        <div class="gct-header">
-          <div id="openAll">Open All</div>
-          <div id="closeAll">Close All</div>
-          <div id="expandAll">Expand All</div>
-          <div id="collapseAll">Collapse All</div>
-        </div>
-        ${buildHtmlTree(tree)}
-    </div>`
-  ).appendTo('#files');
-}
+$(window).scroll(() => {
+  if (isCommit) return;
+  if($('.is-stuck').length) {
+    $('.gct-file-tree').addClass('gct-file-tree-fixed');
+  }else {
+    $('.gct-file-tree').removeClass('gct-file-tree-fixed');
+  }
+});
 
-function buildHtmlTree(tree) {
+const start = () => setInterval(() => {
+  if(!$('.gct-folder-name').length) {
+    urlPullRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
+    urlCommitRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/commit/;
+
+    isCommit = location.href.match(urlCommitRegex);
+
+    if(
+      (location.href.match(urlPullRegex) || location.href.match(urlCommitRegex)) // show only on PR files page
+    ) {
+      chrome.storage.sync.get(['closed', 'collapsed', 'folders'], items => initialSetup(items));
+    }
+  }
+}, 500);
+
+const buildHtmlTree = (tree)  => {
     var content = '<ul>';
 
     let unorderedList = [];
@@ -119,7 +145,7 @@ function buildHtmlTree(tree) {
     return content;
 }
 
-function buildTree(savedItems) {
+const buildTree = (savedItems)  => {
   var tree = {};
 
   $('.file-info').map((i, item) => {
@@ -169,7 +195,7 @@ function buildTree(savedItems) {
   return tree;
 }
 
-function joinEmptyFolders(obj, paths) {
+const joinEmptyFolders = (obj, paths) => {
   let current = obj;
   paths.map(path => current = current[path]);
 
@@ -211,61 +237,4 @@ function joinEmptyFolders(obj, paths) {
   return current;
 }
 
-function mergeObjects(og, so) {
-  for (var key in so) {
-    if (!og[key]) {
-      og[key] = {};
-    }
-
-    if (so[key].hasOwnProperty('length')) {
-      og[key] = og[key].hasOwnProperty('length') ? og[key] : [];
-      og[key].push(so[key][0]);
-    }
-
-    if(typeof so[key] === 'object' && !so[key].hasOwnProperty('length')) {
-      mergeObjects(og[key], so[key]);
-    }
-  }
-  return og;
-}
-
-function areDiffBlocksCollapsed() {
-  var numberOfDiffBlocksCollapsed = 0;
-  var numberOfDiffBlocks = $('#files .file').length;
-
-  $('#files .file').each(function(){
-    if ($(this).hasClass('Details--on open')) {
-      numberOfDiffBlocksCollapsed++;
-    }
-  });
-
-  return numberOfDiffBlocksCollapsed === numberOfDiffBlocks;
-}
-
-function expandAllDiffBlocks() {
-  $('#collapseAll').show();
-  $('#expandAll').hide();
-  $('#files .file').each(function(){
-    if (!$(this).hasClass('Details--on open')) {
-      $(this).addClass('Details--on open')
-    }
-  });
-}
-
-function collapseAllDiffBlocks() {
-  $('#collapseAll').hide();
-  $('#expandAll').show();
-  $('#files .file').each(function(){
-    if ($(this).hasClass('Details--on open')) {
-      $(this).removeClass('Details--on open')
-    }
-  });
-}
-
-function open() {
-  $('.gct-folder').addClass('gct-folder-open');
-}
-
-function close() {
-  $('.gct-folder').removeClass('gct-folder-open');
-}
+$(document).ready(start);

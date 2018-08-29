@@ -1,4 +1,4 @@
-function injectCss(offsetTop, offsetLeft) {
+const injectCss = (offsetTop, offsetLeft, isCommit) => {
   $('#gct-style').remove();
   $(`<style type='text/css' id="gct-style">
     body.full-width #files {
