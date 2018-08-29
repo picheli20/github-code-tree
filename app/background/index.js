@@ -3,19 +3,22 @@ var isCommit = false;
 const open = () =>  $('.gct-folder').addClass('gct-folder-open');
 const close = () => $('.gct-folder').removeClass('gct-folder-open');
 
+const isDiffOpen = (el) => $(el).hasClass('Details--on') && $(el).hasClass('open');
+
+const openDiff = (el) => $(el).addClass('Details--on open');
+const closeDiff = (el) => $(el).removeClass('Details--on open');
 
 const expandAllDiffBlocks = () => {
   $('#collapseAll').show();
   $('#expandAll').hide();
-  $('#files .file').each(() => !$(this).hasClass('Details--on open') && $(this).addClass('Details--on open'));
+  $('#files .file').each((i, el) => openDiff(el));
 }
 
 const collapseAllDiffBlocks = () => {
   $('#collapseAll').hide();
   $('#expandAll').show();
-  $('#files .file').each(() => $(this).hasClass('Details--on open') && $(this).removeClass('Details--on open'));
+  $('#files .file').each((i, el) => closeDiff(el));
 }
-
 
 const injectHTML = (savedItems) => $(
   `<div class="gct-file-tree">
@@ -48,28 +51,43 @@ const mergeObjects = (og, so) => {
 }
 
 
-const initialSetup = (savedItems) => {
+const init = (savedItems) => {
   if ($('.js-diff-progressive-spinner').length || !$('#files').length) {
     return;
   }
 
-  injectCss(isCommit ? 0 : 178, isCommit ? 20 : 0); // style.js
+  injectCss(isCommit); // style.js
   injectHTML(savedItems);
 
   savedItems.collapsed ? collapseAllDiffBlocks() : expandAllDiffBlocks();
   savedItems.closed ? close() : open();
+
+  $(window).scroll(() => {
+    let topOffset;
+
+    if (isCommit) {
+      const { top } = $(`.toc-diff-stats`).offset();
+      topOffset = top + 50;
+    } else {
+      const { top } = $(`.tabnav-tabs`).offset();
+      topOffset = top + 120;
+    }
+
+    window.pageYOffset > topOffset
+      ? $('.gct-file-tree').addClass('gct-file-tree-fixed')
+      : $('.gct-file-tree').removeClass('gct-file-tree-fixed');
+  });
 
   // Click Functions
   $('.gct-folder-name').click(obj => {
     $($($(obj.currentTarget).parent()[0])[0]).toggleClass('gct-folder-open');
   });
 
+  // On file name click
   $('.gct-file-name').click(obj => {
     var href = $(obj.currentTarget)[0].getAttribute("href");
     var file = $(`.file-info > a[href="${href}"]`).parent().parent().parent();
-    if ($(file).hasClass('Details--on open')) {
-      $(file).removeClass('Details--on open');
-    }
+    openDiff(file);
   });
 
   $('#openAll').click(() => open());
@@ -79,17 +97,8 @@ const initialSetup = (savedItems) => {
   $('#collapseAll').click(() => collapseAllDiffBlocks());
 }
 
-$(window).scroll(() => {
-  if (isCommit) return;
-  if($('.is-stuck').length) {
-    $('.gct-file-tree').addClass('gct-file-tree-fixed');
-  }else {
-    $('.gct-file-tree').removeClass('gct-file-tree-fixed');
-  }
-});
-
 const start = () => setInterval(() => {
-  if(!$('.gct-folder-name').length) {
+  if(!$('.gct-file-tree').length) {
     urlPullRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
     urlCommitRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/commit/;
 
@@ -98,7 +107,7 @@ const start = () => setInterval(() => {
     if(
       (location.href.match(urlPullRegex) || location.href.match(urlCommitRegex)) // show only on PR files page
     ) {
-      chrome.storage.sync.get(['closed', 'collapsed', 'folders'], items => initialSetup(items));
+      chrome.storage.sync.get(['closed', 'collapsed', 'folders'], items => init(items));
     }
   }
 }, 500);

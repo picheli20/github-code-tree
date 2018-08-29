@@ -1,4 +1,4 @@
-const injectCss = (offsetTop, offsetLeft, isCommit) => {
+const injectCss = (isCommit) => {
   $('#gct-style').remove();
   $(`<style type='text/css' id="gct-style">
     body.full-width #files {
@@ -17,9 +17,9 @@ const injectCss = (offsetTop, offsetLeft, isCommit) => {
 
     .gct-file-tree {
       position: absolute;
-      top: ${$('#files').offset().top - offsetTop}px;
+      top: ${$('#files').offset().top - (isCommit ? 0 : 178)}px;
       background-color: transparent;
-      left: ${offsetLeft}px;
+      left: ${isCommit ? 20 : 0}px;
       z-index: 28;
       width: 280px;
       border: 1px solid #ddd;
@@ -77,9 +77,9 @@ const injectCss = (offsetTop, offsetLeft, isCommit) => {
     body:not(.full-width) .gct-file-tree,
     .gct-file-tree-fixed {
       position: fixed;
-      top: 70px;
+      top: ${isCommit ? 20 : 70}px;
       left: 20px;
-      height: calc(100% - 80px);
+      height: calc(100% - ${isCommit ? 40 : 80}px);
     }
   </style>`)
   .appendTo("head");
