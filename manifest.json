@@ -1,7 +1,7 @@
 {
-    "name": "Github Code Tree",
-    "version": "1.0.0",
-    "description": "Show the source tree on the github PR",
+    "name": "Tree Explorer for Github",
+    "version": "1.0.1",
+    "description": "Show the file tree for PR's and commits",
     "manifest_version": 2,
     "permissions": [
       "activeTab",
