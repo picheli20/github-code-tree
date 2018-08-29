@@ -1,14 +1,7 @@
-function debug(what) {
-  document.getElementById('debug').innerHTML = JSON.stringify(what, null, 2);
-}
+const debug = (what) => document.getElementById('debug').innerHTML = JSON.stringify(what, null, 2);
 
-function init() {
-  checkBoxInit(document.getElementById('closed'), 'closed');
-  checkBoxInit(document.getElementById('collapsed'), 'collapsed');
-  checkBoxInit(document.getElementById('folders'), 'folders');
-}
-
-function checkBoxInit(element, storeId) {
+const checkBoxInit = (storeId) => {
+  const element = document.getElementById(option);
   chrome.storage.sync.get([storeId], items => element.checked = items[storeId]);
 
   var toStore = {};
@@ -18,4 +11,4 @@ function checkBoxInit(element, storeId) {
   });
 }
 
-window.addEventListener("load", init);
+window.addEventListener("load", () => ['closed', 'collapsed', 'folders', 'largeDiff'].map(option => checkBoxInit(option)));

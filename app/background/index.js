@@ -50,6 +50,7 @@ const mergeObjects = (og, so) => {
   return og;
 }
 
+const openLargeDiff = () => $('.load-diff-button').click();
 
 const init = (savedItems) => {
   if ($('.js-diff-progressive-spinner').length || !$('#files').length) {
@@ -61,6 +62,10 @@ const init = (savedItems) => {
 
   savedItems.collapsed ? collapseAllDiffBlocks() : expandAllDiffBlocks();
   savedItems.closed ? close() : open();
+
+  if (savedItems.largeDiff) {
+    openLargeDiff();
+  }
 
   $(window).scroll(() => {
     let topOffset;
