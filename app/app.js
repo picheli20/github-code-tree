@@ -42,8 +42,6 @@ function initialSetup(savedItems) {
   savedItems.collapsed ? collapseAllDiffBlocks() : expandAllDiffBlocks();
   savedItems.closed ? close() : open();
 
-  areDiffBlocksCollapsed() ? $('#collapseAll').hide() : $('#expandAll').hide();
-
   // Click Functions
   $('.gct-folder-name').click(obj => {
     $($($(obj.currentTarget).parent()[0])[0]).toggleClass('gct-folder-open');
@@ -52,8 +50,8 @@ function initialSetup(savedItems) {
   $('.gct-file-name').click(obj => {
     var href = $(obj.currentTarget)[0].getAttribute("href");
     var file = $(`.file-info > a[href="${href}"]`).parent().parent().parent();
-    if ($(file).hasClass('open Details--on')) {
-      $(file).removeClass('open Details--on');
+    if ($(file).hasClass('Details--on open')) {
+      $(file).removeClass('Details--on open');
     }
   });
 
@@ -236,7 +234,7 @@ function areDiffBlocksCollapsed() {
   var numberOfDiffBlocks = $('#files .file').length;
 
   $('#files .file').each(function(){
-    if ($(this).hasClass('open Details--on')) {
+    if ($(this).hasClass('Details--on open')) {
       numberOfDiffBlocksCollapsed++;
     }
   });
@@ -245,11 +243,11 @@ function areDiffBlocksCollapsed() {
 }
 
 function expandAllDiffBlocks() {
-  $('#expandAll').hide();
   $('#collapseAll').show();
+  $('#expandAll').hide();
   $('#files .file').each(function(){
-    if ($(this).hasClass('open Details--on')) {
-      $(this).removeClass('open Details--on')
+    if (!$(this).hasClass('Details--on open')) {
+      $(this).addClass('Details--on open')
     }
   });
 }
@@ -258,8 +256,8 @@ function collapseAllDiffBlocks() {
   $('#collapseAll').hide();
   $('#expandAll').show();
   $('#files .file').each(function(){
-    if (!$(this).hasClass('open Details--on')) {
-      $(this).addClass('open Details--on')
+    if ($(this).hasClass('Details--on open')) {
+      $(this).removeClass('Details--on open')
     }
   });
 }
