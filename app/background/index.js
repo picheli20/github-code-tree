@@ -104,8 +104,8 @@ const init = (savedItems) => {
 
 const start = () => setInterval(() => {
   if(!$('.gct-file-tree').length) {
-    urlPullRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
-    urlCommitRegex = /(http|https):\/\/(www\.)?github\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/commit/;
+    urlPullRegex = /(http|https):\/\/(www\.)?github[\.]?[-a-zA-Z0-9]*\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/pull\/[0-9]*\/(files|commits)/;
+    urlCommitRegex = /(http|https):\/\/(www\.)?github[\.]?[-a-zA-Z0-9]*\.com\/[-a-zA-Z0-9]*\/[-a-zA-Z0-9]*\/commit/;
 
     isCommit = location.href.match(urlCommitRegex);
 
