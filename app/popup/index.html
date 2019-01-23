@@ -4,6 +4,7 @@
     <script src="./script.js"></script>
   </head>
   <body>
+    <div id="debug"></div>
     <div class="header text-center">
       <img src="img/icon.png" alt="GitHub Logo" class="github-logo">
       <h2>Tree Explorer for Github</h2>
@@ -25,6 +26,10 @@
       <input class="styled-checkbox" id="folders" type="checkbox">
       <label for="folders">Join folders (experimental)</label>
     </div>
+    <div class="form-input">
+        <label for="customRegex">Custom regex for url match (<a href="https://github.com/picheli20/github-code-tree/blob/master/app/background/index.js#L109" target="_blanket">details</a>)</label>
+        <input class="styled-input" id="customRegex" type="text">
+      </div>
     <div class="footer">
       <div class="credit"> by <a href="https://github.com/picheli20" target="_blanket">@picheli20</a></div>
     </div>
