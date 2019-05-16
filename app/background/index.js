@@ -107,8 +107,8 @@ const start = () => setInterval(() => {
     const regex = customRegex || '(http|https):\\/\\/(www\\.)?github[\\.]?[-a-zA-Z0-9]*\\.com';
 
     if(!$('.gct-file-tree').length) {
-      urlPullRegex = RegExp(`${regex}\\/[-a-zA-Z0-9-_]*\\/[-a-zA-Z0-9-_]*\\/pull\\/[0-9]*\\/(files|commits)`);
-      urlCommitRegex = RegExp(`${regex}\\/[-a-zA-Z0-9]*\\/[-a-zA-Z0-9]*\\/commit`);
+      urlPullRegex = RegExp(`${regex}\\/[-a-zA-Z0-9-_.]*\\/[-a-zA-Z0-9-_.]*\\/pull\\/[0-9]*\\/(files|commits)`);
+      urlCommitRegex = RegExp(`${regex}\\/[-a-zA-Z0-9_.]*\\/[-a-zA-Z0-9_.]*\\/commit`);
 
       isCommit = location.href.match(urlCommitRegex);
 
