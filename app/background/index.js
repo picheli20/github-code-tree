@@ -109,17 +109,20 @@ const start = () => setInterval(() => {
     if(!$('.gct-file-tree').length) {
       urlPullRegex = RegExp(`${regex}\\/[-a-zA-Z0-9-_]*\\/[-a-zA-Z0-9-_]*\\/pull\\/[0-9]*\\/(files|commits)`);
       urlCommitRegex = RegExp(`${regex}\\/[-a-zA-Z0-9]*\\/[-a-zA-Z0-9]*\\/commit`);
-
+      urlCompareRegex = RegExp(`${regex}\\/[-a-zA-Z0-9]*\\/[-a-zA-Z0-9]*\\/compare\\/*`);
+      
       isCommit = location.href.match(urlCommitRegex);
 
       if(
-        (location.href.match(urlPullRegex) || isCommit) // show only on PR or commit page
+        (location.href.match(urlPullRegex) ||
+        location.href.match(urlCompareRegex) ||
+        isCommit) // show only on PR or commit page
       ) {
         chrome.storage.sync.get(['closed', 'collapsed', 'folders', 'largeDiff'], items => init(items));
       }
     }
   });
-}, 500);
+}, 3000);
 
 const buildHtmlTree = (tree)  => {
     var content = '<ul>';
