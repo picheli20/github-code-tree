@@ -110,7 +110,7 @@ const start = () => setInterval(() => {
       urlPullRegex = RegExp(`${regex}\\/[-a-zA-Z0-9-_]*\\/[-a-zA-Z0-9-_]*\\/pull\\/[0-9]*\\/(files|commits)`);
       urlCommitRegex = RegExp(`${regex}\\/[-a-zA-Z0-9]*\\/[-a-zA-Z0-9]*\\/commit`);
       urlCompareRegex = RegExp(`${regex}\\/[-a-zA-Z0-9]*\\/[-a-zA-Z0-9]*\\/compare\\/*`);
-      
+
       isCommit = location.href.match(urlCommitRegex);
 
       if(
