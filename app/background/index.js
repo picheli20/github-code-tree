@@ -167,13 +167,19 @@ const buildTree = (savedItems)  => {
   var tree = {};
 
   $('.file-info').map((i, item) => {
-    var diff = $(item).find('.diffstat')[0]
-                      .getAttribute("aria-label")
-                      .split(' & ');
+    var diff = /\D*(\d+)\D+(\d+)\D+(\d+)\D*/
+      .exec(
+        $(item).find('.diffstat')[0]
+          .getAttribute("aria-label")
+      );
 
-    if (diff.length !== 2) { // skip the "Empty file removed" case
-      diff = ['0', '0'];
+    if (!diff && diff.length <= 4) { // skip the "Empty file removed" case
+      diff = ['0', '0', '0'];
+    } else {
+      diff = [diff[2], diff[2], diff[3]]
     }
+
+
     var pathString = $(item).find('a')[0];
     var pathLink = pathString.getAttribute("href");
     var filePath = $(item).parent('.file-header').data('path');
@@ -185,8 +191,9 @@ const buildTree = (savedItems)  => {
       if (itemSplitted.length === i + 1) {
         nodeObjJoker['files'] = nodeObjJoker['files'] || [];
         nodeObjJoker['files'].push({
-          added: diff[0].replace(/[^0-9]/g,'') * 1,
-          removed: diff[1].replace(/[^0-9]/g,'') * 1,
+          total: parseInt(diff[0]),
+          added: parseInt(diff[1]),
+          removed: parseInt(diff[2]),
           name: node,
           link: pathLink
         });
