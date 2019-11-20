@@ -20,6 +20,8 @@ const collapseAllDiffBlocks = () => {
   $('#files .file').each((i, el) => closeDiff(el));
 }
 
+const reInjectHTML = (savedItems) => $('#gct-tree').replaceWith($(`${buildHtmlTree(buildTree(savedItems))}`));
+
 const injectHTML = (savedItems) => $(
   `<div class="gct-file-tree">
       <div class="gct-header">
@@ -29,6 +31,9 @@ const injectHTML = (savedItems) => $(
         <div id="collapseAll">Collapse All</div>
       </div>
       ${buildHtmlTree(buildTree(savedItems))}
+      <div class="gct-header">
+        <div id="refresh">Refresh</div>
+      </div>
   </div>`
 ).appendTo('#files');
 
@@ -100,6 +105,8 @@ const init = (savedItems) => {
 
   $('#expandAll').click(() => expandAllDiffBlocks());
   $('#collapseAll').click(() => collapseAllDiffBlocks());
+
+  $('#refresh').click(() => reInjectHTML(savedItems));
 }
 
 const start = () => setInterval(() => {
@@ -122,7 +129,7 @@ const start = () => setInterval(() => {
 }, 500);
 
 const buildHtmlTree = (tree)  => {
-    var content = '<ul>';
+    var content = '<ul id="gct-tree">';
 
     let unorderedList = [];
     for(var key in tree) {
@@ -159,6 +166,8 @@ const buildHtmlTree = (tree)  => {
         </li>`;
       }
     });
+
+    content += '</ul>';
 
     return content;
 }
