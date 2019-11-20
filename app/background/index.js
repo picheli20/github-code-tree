@@ -173,7 +173,7 @@ const buildTree = (savedItems)  => {
           .getAttribute("aria-label")
       );
 
-    if (!diff || diff.length <= 4) { // skip the "Empty file removed" case
+    if (!diff || diff.length < 4) { // skip the "Empty file removed" case
       diff = ['0', '0', '0'];
     } else {
       diff = [diff[2], diff[2], diff[3]]
