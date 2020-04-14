@@ -70,6 +70,16 @@ const injectCss = (isCommit) => {
       cursor: pointer;
     }
 
+    .gct-file {
+      display: grid;
+      grid-template-columns: 14px auto;
+      margin-left: -14px;
+    }
+
+    .gct-file.viewed {
+      opacity:0.5;
+    }
+
     .gct-file-name {
       cursor: pointer;
     }

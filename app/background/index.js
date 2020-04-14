@@ -107,6 +107,9 @@ const init = (savedItems) => {
   $('#collapseAll').click(() => collapseAllDiffBlocks());
 
   $('#refresh').click(() => reInjectHTML(savedItems));
+
+  // recompute the tree when a file has been viewed or not
+  $(document, '.js-reviewed-toggle').click(() => { reInjectHTML(savedItems)});
 }
 
 const start = () => setInterval(() => {
@@ -151,11 +154,16 @@ const buildHtmlTree = (tree)  => {
     orderedList.forEach(item => {
       if(item.type === 'file') {
         content += `
-          <li class="gct-file">
-            <a class="gct-file-name" href="${item.file.link}">${iconFile()}  ${item.file.name}</a>
-            <span class="gct-file-changes">
-              <span class="gct-file-added">+${item.file.added}</span>
-              <span class="gct-file-removed">-${item.file.removed}</span>
+          <li class="gct-file ${item.file.viewed ? 'viewed' : ''}">
+            <a class="gct-file-view">
+              ${item.file.viewed ? iconViewed() : ''}
+            </a>
+            <span>
+              <a class="gct-file-name" href="${item.file.link}">${iconFile()}  ${item.file.name}</a>
+              <span class="gct-file-changes">
+                <span class="gct-file-added">+${item.file.added}</span>
+                <span class="gct-file-removed">-${item.file.removed}</span>
+              </span>
             </span>
           </li>
         `;
@@ -193,6 +201,7 @@ const buildTree = (savedItems)  => {
     var pathLink = pathString.getAttribute("href");
     var filePath = $(item).parent('.file-header').data('path');
     var itemSplitted = filePath.split('/');
+    var isViewed = $(item).next('.file-actions').find('.js-reviewed-checkbox').is(':checked');
 
     var nodeObj = {};
     var nodeObjJoker = nodeObj;
@@ -204,7 +213,8 @@ const buildTree = (savedItems)  => {
           added: parseInt(diff[1]),
           removed: parseInt(diff[2]),
           name: node,
-          link: pathLink
+          link: pathLink,
+          viewed: isViewed,
         });
         return;
       }
