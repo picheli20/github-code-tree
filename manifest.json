@@ -1,6 +1,6 @@
 {
     "name": "Tree Explorer for Github",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "description": "Show the file tree for PR's and commits",
     "manifest_version": 2,
     "permissions": [
