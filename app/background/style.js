@@ -16,15 +16,16 @@ const injectCss = (isCommit) => {
     }
 
     .gct-file-tree {
-      position: absolute;
-      top: ${$('#files').offset().top - (isCommit ? 0 : 178)}px;
+      position: sticky;
+      top: ${isCommit ? 20 : 70}px;
       background-color: transparent;
-      left: ${isCommit ? 20 : 0}px;
+      left: 20px;
       z-index: 28;
       width: 280px;
       border: 1px solid #ddd;
       overflow: auto;
       padding: 10px;
+      float: left;
     }
 
     .gct-icon {
@@ -83,14 +84,5 @@ const injectCss = (isCommit) => {
     .gct-file-name {
       cursor: pointer;
     }
-
-    body:not(.full-width) .gct-file-tree,
-    .gct-file-tree-fixed {
-      position: fixed;
-      top: ${isCommit ? 20 : 70}px;
-      left: 20px;
-      height: calc(100% - ${isCommit ? 40 : 80}px);
-    }
-  </style>`)
-  .appendTo("head");
-}
+  </style>`).appendTo("head");
+};
