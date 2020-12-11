@@ -35,7 +35,7 @@ const injectHTML = (savedItems) => $(
         <div id="refresh">Refresh</div>
       </div>
   </div>`
-).appendTo('#files');
+).insertAfter('#js-repo-pjax-container>div:nth-of-type(1)');
 
 const mergeObjects = (og, so) => {
   for (var key in so) {
@@ -71,22 +71,6 @@ const init = (savedItems) => {
   if (savedItems.largeDiff) {
     openLargeDiff();
   }
-
-  $(window).scroll(() => {
-    let topOffset;
-
-    if (isCommit) {
-      const { top } = $(`.toc-diff-stats`).offset();
-      topOffset = top + 50;
-    } else {
-      const { top } = $(`.tabnav-tabs`).offset();
-      topOffset = top + 120;
-    }
-
-    window.pageYOffset > topOffset
-      ? $('.gct-file-tree').addClass('gct-file-tree-fixed')
-      : $('.gct-file-tree').removeClass('gct-file-tree-fixed');
-  });
 
   // Click Functions
   $('.gct-folder-name').click(obj => {
