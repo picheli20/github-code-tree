@@ -20,7 +20,10 @@ const collapseAllDiffBlocks = () => {
   $('#files .file').each((i, el) => closeDiff(el));
 }
 
-const reInjectHTML = (savedItems) => $('#gct-tree').replaceWith($(`${buildHtmlTree(buildTree(savedItems))}`));
+const reInjectHTML = (savedItems) => {
+  $('#gct-tree').replaceWith($(`${buildHtmlTree(buildTree(savedItems))}`));
+  setClickAction(savedItems); 
+};
 
 const injectHTML = (savedItems) => $(
   `<div class="gct-file-tree">
@@ -72,6 +75,26 @@ const init = (savedItems) => {
     openLargeDiff();
   }
 
+  $('#openAll').click(() => open());
+  $('#closeAll').click(() => close());
+
+  $('#expandAll').click(() => expandAllDiffBlocks());
+  $('#collapseAll').click(() => collapseAllDiffBlocks());
+
+  $('#refresh').click(() => reInjectHTML(savedItems));
+
+  setClickAction();
+
+  const observer = new MutationObserver(() => {
+    $('.js-reviewed-checkbox').off('click');
+    // recompute the tree when a file has been viewed or not
+    $('.js-reviewed-checkbox').on('click', () => reInjectHTML(savedItems));
+  })
+  
+  observer.observe(document.querySelector('.js-diff-progressive-container'), {attributes:true, childList:true, subtree: true});
+}
+
+const setClickAction = () => {
   // Click Functions
   $('.gct-folder-name').click(obj => {
     $($($(obj.currentTarget).parent()[0])[0]).toggleClass('gct-folder-open');
@@ -83,17 +106,6 @@ const init = (savedItems) => {
     var file = $(`.file-info > a[href="${href}"]`).parent().parent().parent();
     openDiff(file);
   });
-
-  $('#openAll').click(() => open());
-  $('#closeAll').click(() => close());
-
-  $('#expandAll').click(() => expandAllDiffBlocks());
-  $('#collapseAll').click(() => collapseAllDiffBlocks());
-
-  $('#refresh').click(() => reInjectHTML(savedItems));
-
-  // recompute the tree when a file has been viewed or not
-  $(document, '.js-reviewed-toggle').click(() => { reInjectHTML(savedItems)});
 }
 
 const start = () => setInterval(() => {
